@@ -1,0 +1,22 @@
+.button {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 60px;
+  font-size: large;
+  font-weight: bold;
+  text-transform: uppercase;
+  background-color: black;
+  border: 5px solid white;
+  color: white;
+  cursor: pointer;
+  z-index: 1;
+}
+
+@media (hover: hover) {
+  .button:hover {
+    background-color: blue;
+  }
+}
