@@ -2,23 +2,50 @@ import { CollisionDetector } from "./CollisionDetector";
 import { Map } from "./Map";
 import { TetrisBlock } from "./TetrisBlock";
 import { TetrisBlockGenerator } from "./TetrisBlockGenerator";
+import { View } from "./View";
 
 export class Service {
   map: Map;
   tetrisBlocks: TetrisBlock[];
   movingTetrisBlock: TetrisBlock;
+  drawInterval: any;
   fallingDownInterval: any;
   isHitBottom = false;
+  dropDownIntervalTime: number;
+  isStart = false;
+  winScore: number;
+  score: number;
+  callback: ({ score, isWin }: { score: number; isWin: boolean }) => void;
 
-  constructor(map: Map) {
+  constructor(
+    map: Map,
+    winScore: number,
+    score: number,
+    dropDownIntervalTime: number,
+    callback: ({ score, isWin }: { score: number; isWin: boolean }) => void
+  ) {
     this.map = map;
+    this.winScore = winScore;
+    this.score = score;
     this.movingTetrisBlock = this.getNewTetrisBlock();
+    View.drawPreview(this.movingTetrisBlock);
     this.tetrisBlocks = [...new Array(3)].map((__) => this.getNewTetrisBlock());
     this.map.drawBlock(this.movingTetrisBlock);
+    View.drawPreview(this.tetrisBlocks[0]);
+    this.dropDownIntervalTime = dropDownIntervalTime;
+    this.callback = callback;
+  }
+
+  start() {
+    this.drawInterval = setInterval(() => {
+      View.draw(this.map);
+    }, 16);
+    this.isStart = true;
     this.fallingDownInterval = this.getFallingDownInterval();
   }
 
   dropBlock() {
+    if (!this.isStart) return;
     while (
       !CollisionDetector.detectCollisionOnBottom(
         this.map,
@@ -26,12 +53,14 @@ export class Service {
       )
     ) {
       this.moveBlockDown();
+      View.draw(this.map);
     }
-    this.map.clearRow();
-    this.setMovingTetrisBlock();
+    this.next();
   }
 
   moveBlockLeft() {
+    if (!this.isStart) return;
+
     if (
       CollisionDetector.detectCollisionOnLeft(this.map, this.movingTetrisBlock)
     )
@@ -42,6 +71,8 @@ export class Service {
   }
 
   moveBlockRight() {
+    if (!this.isStart) return;
+
     if (
       CollisionDetector.detectCollisionOnRight(this.map, this.movingTetrisBlock)
     )
@@ -52,6 +83,8 @@ export class Service {
   }
 
   moveBlockDown() {
+    if (!this.isStart) return;
+
     if (
       CollisionDetector.detectCollisionOnBottom(
         this.map,
@@ -65,6 +98,8 @@ export class Service {
   }
 
   rotateBlock() {
+    if (!this.isStart) return;
+
     this.map.eraseBlock(this.movingTetrisBlock);
 
     // 제자리 회전
@@ -152,6 +187,10 @@ export class Service {
     clearInterval(this.fallingDownInterval);
   }
 
+  clearDrawInterval() {
+    clearInterval(this.drawInterval);
+  }
+
   getFallingDownInterval() {
     const fallingDownInterval = setInterval(() => {
       this.moveBlockDown();
@@ -162,7 +201,7 @@ export class Service {
         )
       ) {
         if (this.isHitBottom) {
-          this.setMovingTetrisBlock();
+          this.next();
         }
         console.log("다내려왔거등");
         this.isHitBottom = true;
@@ -170,18 +209,58 @@ export class Service {
       }
 
       this.isHitBottom = false;
-    }, 1000);
+    }, this.dropDownIntervalTime);
 
     return fallingDownInterval;
   }
 
-  setMovingTetrisBlock() {
-    const nextMovingTetrisBlock = this.tetrisBlocks.shift();
-    if (!nextMovingTetrisBlock) return;
+  next() {
+    this.score += 100;
     this.clearFallingDownInterval();
-    this.movingTetrisBlock = nextMovingTetrisBlock;
-    this.tetrisBlocks.push(this.getNewTetrisBlock());
+    this.score += this.map.clearRow();
+    View.draw(this.map);
+    View.writeScore(this.score);
+
+    console.log(this.score, this.winScore);
+    if (this.score >= this.winScore) {
+      console.log("win!");
+      this.win();
+      return;
+    }
+
+    this.setNextBlock();
+
+    if (
+      CollisionDetector.detectCollisionOnStart(this.map, this.movingTetrisBlock)
+    ) {
+      console.log("lose!");
+      this.lose();
+      return;
+    }
+
     this.map.drawBlock(this.movingTetrisBlock);
     this.fallingDownInterval = this.getFallingDownInterval();
+  }
+
+  setNextBlock() {
+    const nextMovingTetrisBlock = this.tetrisBlocks.shift();
+    if (!nextMovingTetrisBlock) throw Error("there is no next block");
+    View.drawPreview(this.tetrisBlocks[0]);
+    this.tetrisBlocks.push(this.getNewTetrisBlock());
+    this.movingTetrisBlock = nextMovingTetrisBlock;
+  }
+
+  lose() {
+    this.clearDrawInterval();
+    this.clearFallingDownInterval();
+    this.isStart = false;
+    this.callback({ score: this.score, isWin: false });
+  }
+
+  win() {
+    this.clearDrawInterval();
+    this.clearFallingDownInterval();
+    this.isStart = false;
+    this.callback({ score: this.score, isWin: true });
   }
 }

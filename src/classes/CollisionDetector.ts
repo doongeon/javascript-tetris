@@ -35,6 +35,10 @@ export class CollisionDetector {
     return this.checkCollision(cells, mapCopy);
   }
 
+  public static detectCollisionOnStart(map: Map, newTetrisBLock: TetrisBlock) {
+    return this.checkCollision(newTetrisBLock.getCells(), map);
+  }
+
   private static getDeepCopy(map: Map, tetrisBlock: TetrisBlock) {
     const mapCopy = map.getDeepCopy();
     const tetrisBlockCopy = tetrisBlock.getDeepCopy();

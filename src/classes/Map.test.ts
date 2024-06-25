@@ -122,10 +122,10 @@ test("움직이는 블럭을 그려내는 로직", () => {
   ]);
 });
 
-test("clearRow 메서드", () => {
+test("clearRow 매서드의 행을 지우는 로직", () => {
   const map = new Map([
-    [1, 0, 0],
-    [1, 1, 1],
+    [0, 0, 0],
+    [0, 0, 0],
     [1, 1, 1],
   ]);
 
@@ -134,6 +134,16 @@ test("clearRow 메서드", () => {
   expect(map.getGrid()).toStrictEqual([
     [0, 0, 0],
     [0, 0, 0],
-    [1, 0, 0],
+    [0, 0, 0],
   ]);
+});
+
+test("clearRow 메서드의 점수 계산 로직", () => {
+  const map = new Map([
+    [0, 0, 0],
+    [0, 0, 0],
+    [1, 1, 1],
+  ]);
+
+  expect(map.clearRow()).toBe(1000);
 });

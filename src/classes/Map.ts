@@ -59,20 +59,24 @@ export class Map {
   }
 
   public clearRow() {
-    let isRowClear = false;
+    let score = 0;
 
     for (let i = this.grid.length - 1; i > 0; i--) {
+      let bonus = 0;
       if (this.grid[i].reduce((a, b) => a + b) === this.grid[0].length) {
-        isRowClear = true;
         while (this.grid[i].reduce((a, b) => a + b) === this.grid[0].length) {
+          bonus++;
           for (let j = i - 1; j >= 0; j--) {
             this.grid[j + 1] = this.grid[j];
           }
+
+          this.grid[0] = new Array(this.grid[0].length).fill(0); // 가장 위 행은 포문에서 설정되지 않아 따로 설정함'
         }
       }
+      score += 1000 * bonus * bonus;
     }
 
-    if (isRowClear) this.grid[0] = new Array(this.grid[0].length).fill(0); // 가장 위 행은 포문에서 설정되지 않아 따로 설정함
+    return score;
   }
 
   public isEmptyCell({ x, y }: { x: number; y: number }) {
