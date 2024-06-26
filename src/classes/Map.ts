@@ -37,6 +37,18 @@ export class Map {
       for (let j = 0; j < blockWidth; j++) {
         if (tetrisBlock.shape[i][j] === 0) continue;
 
+        if (
+          tetrisBlock.position.y - 1 + i < 0 ||
+          tetrisBlock.position.y - 1 + i > this.grid.length - 1
+        )
+          continue;
+
+        if (
+          tetrisBlock.position.x - 1 + j < 0 ||
+          tetrisBlock.position.x - 1 + j > this.grid[0].length - 1
+        )
+          continue;
+
         this.grid[tetrisBlock.position.y - 1 + i][
           tetrisBlock.position.x - 1 + j
         ] = 0;
@@ -51,21 +63,33 @@ export class Map {
       for (let j = 0; j < blockWidth; j++) {
         if (movingBlock.shape[i][j] === 0) continue;
 
+        if (
+          movingBlock.position.y - 1 + i < 0 ||
+          movingBlock.position.y - 1 + i > this.grid.length - 1
+        )
+          continue;
+
+        if (
+          movingBlock.position.x - 1 + j < 0 ||
+          movingBlock.position.x - 1 + j > this.grid[0].length - 1
+        )
+          continue;
+
         this.grid[movingBlock.position.y - 1 + i][
           movingBlock.position.x - 1 + j
-        ] = 1;
+        ] = movingBlock.shape[i][j];
       }
     }
   }
 
   public clearRow() {
     let score = 0;
-
     for (let i = this.grid.length - 1; i > 0; i--) {
       let bonus = 0;
-      if (this.grid[i].reduce((a, b) => a + b) === this.grid[0].length) {
-        while (this.grid[i].reduce((a, b) => a + b) === this.grid[0].length) {
+      if (!this.grid[i].includes(0)) {
+        while (!this.grid[i].includes(0)) {
           bonus++;
+          // this.beepSound.beepClearRow();
           for (let j = i - 1; j >= 0; j--) {
             this.grid[j + 1] = this.grid[j];
           }
@@ -82,7 +106,7 @@ export class Map {
   public isEmptyCell({ x, y }: { x: number; y: number }) {
     if (x < 0 || x >= this.grid[0].length) return false; // 블럭이 있는거처럼 표현
     if (y < 0 || y > this.grid.length - 1) return false; // 블럭이 있는거처럼 표현
-    if (this.grid[y][x] === 1) return false;
+    if (this.grid[y][x] !== 0) return false;
 
     return true;
   }
