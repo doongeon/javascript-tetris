@@ -3,21 +3,19 @@ import { BlockPosition, BlockShape } from "./Types";
 export class TetrisBlock {
   shape: BlockShape;
   position: BlockPosition;
-  color: string;
 
-  constructor(blockShape: BlockShape, position: BlockPosition, color: string) {
+  constructor(blockShape: BlockShape, position: BlockPosition) {
     if (blockShape.length !== blockShape[0].length)
       throw Error("only sqaure matrix");
 
     this.shape = blockShape;
     this.position = position;
-    this.color = color;
   }
 
   getDeepCopy() {
     const shapeCopy = this.shape.map((row) => [...row]);
     const positionCopy = { ...this.position };
-    return new TetrisBlock(shapeCopy, positionCopy, this.color);
+    return new TetrisBlock(shapeCopy, positionCopy);
   }
 
   getCells() {

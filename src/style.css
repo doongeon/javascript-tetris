@@ -67,6 +67,26 @@ body {
   z-index: 1;
 }
 
+.orange.cell {
+  background-color: orange;
+  z-index: 1;
+}
+
+.yellow.cell {
+  background-color: yellow;
+  z-index: 1;
+}
+
+.green.cell {
+  background-color: green;
+  z-index: 1;
+}
+
+.blue.cell {
+  background-color: blue;
+  z-index: 1;
+}
+
 .game-console {
   padding: var(--console-padding);
   width: var(--console-width);
