@@ -8,8 +8,7 @@ test("TetrisBlock 클래스 getCopy 메서드의 깊은 복사", () => {
       [1, 1, 1],
       [0, 0, 0],
     ],
-    { x: 4, y: 2 },
-    "red"
+    { x: 4, y: 2 }
   );
   const tetrisBlockCopy = tetrisBlock.getDeepCopy();
   tetrisBlockCopy.moveLeft();
