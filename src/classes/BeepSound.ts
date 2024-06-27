@@ -1,44 +1,55 @@
 export class BeepSound {
-  static AudioContext = window.AudioContext;
-  static audioCtx = new this.AudioContext();
-
-  // constructor() {
-  //   const AudioContext = window.AudioContext;
-  //   this.audioCtx = new AudioContext();
-  // }
+  static AudioContext =
+    (typeof window !== "undefined" && window.AudioContext) || null;
+  static audioCtx = this.AudioContext ? new this.AudioContext() : null;
 
   private static getOscillator(freq: number) {
-    const oscillator = this.audioCtx.createOscillator();
-    oscillator.type = "sine";
-    oscillator.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
-    oscillator.connect(this.audioCtx.destination);
+    const oscillator = this.audioCtx?.createOscillator();
+    const gainNode = this.audioCtx?.createGain();
 
+    if (oscillator && this.audioCtx?.destination && gainNode) {
+      oscillator.type = "square";
+      oscillator.frequency.setValueAtTime(freq, this.audioCtx.currentTime || 0);
+      oscillator.connect(gainNode);
+      gainNode.connect(this.audioCtx.destination);
+      gainNode.gain.setValueAtTime(0.05, this.audioCtx.currentTime); // 볼륨을 낮춤 (0.1은 원래 볼륨의 10%)
+    }
     return oscillator;
   }
 
   private static beep(freq: number) {
     const oscillator = this.getOscillator(freq);
-    oscillator.start();
-    setTimeout(() => {
-      oscillator.stop();
-    }, 100);
+    if (oscillator) {
+      oscillator.start();
+      setTimeout(() => {
+        oscillator.stop();
+      }, 100);
+    }
   }
 
   public static beepMove() {
-    this.beep(300);
-    this.beep(300);
-    this.beep(300);
+    [...new Array(1)].forEach(() => {
+      this.beep(210);
+    });
+  }
+
+  public static beepDrop() {
+    [...new Array(1)].forEach(() => {
+      this.beep(310);
+    });
   }
 
   public static beepDeny() {
-    this.beep(100);
-    this.beep(100);
-    this.beep(100);
+    [...new Array(3)].forEach(() => {
+      this.beep(105);
+    });
   }
 
   public static beepClearRow(bonus: number) {
-    this.beep(600);
-    this.beep(600);
-    this.beep(600);
+    setTimeout(() => {
+      [...new Array(3)].forEach(() => {
+        this.beep(400 + 50 * bonus);
+      });
+    }, 0 + 100 * bonus);
   }
 }
