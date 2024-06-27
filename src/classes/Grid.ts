@@ -83,13 +83,13 @@ export class Grid {
       if (!this.grid[i].includes(0)) {
         while (!this.grid[i].includes(0)) {
           bonus++;
+          BeepSound.beepClearRow(bonus);
           for (let j = i - 1; j >= 0; j--) {
             this.grid[j + 1] = this.grid[j];
           }
 
           this.grid[0] = new Array(this.grid[0].length).fill(0); // 가장 위 행은 포문에서 설정되지 않아 따로 설정함'
         }
-        BeepSound.beepClearRow();
       }
       score += 1000 * bonus * bonus;
     }
