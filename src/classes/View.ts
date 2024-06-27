@@ -1,19 +1,19 @@
-import { Map } from "./Map";
+import { Grid } from "./Grid";
 import { TetrisBlock } from "./TetrisBlock";
 
 export class View {
-  public static draw(map: Map) {
+  public static draw(grid: Grid) {
     this.clearView();
-    this.colorView(map);
+    this.colorView(grid);
   }
 
-  private static colorView(map: Map) {
+  private static colorView(grid: Grid) {
     const cells = document.getElementsByClassName("cell");
 
-    for (let i = 0; i < map.grid.length; i++) {
-      for (let j = 0; j < map.grid[0].length; j++) {
-        const currentCell = cells[map.grid[0].length * i + j];
-        switch (map.grid[i][j]) {
+    for (let i = 0; i < grid.grid.length; i++) {
+      for (let j = 0; j < grid.grid[0].length; j++) {
+        const currentCell = cells[grid.grid[0].length * i + j];
+        switch (grid.grid[i][j]) {
           case 0:
             continue;
           case 1:
@@ -33,10 +33,10 @@ export class View {
             break;
         }
 
-        // if (map.grid[i][j] === 0) continue;
+        // if (grid.grid[i][j] === 0) continue;
 
         // if()
-        // cells[map.grid[0].length * i + j].classList.add("red");
+        // cells[grid.grid[0].length * i + j].classList.add("red");
       }
     }
   }
