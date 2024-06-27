@@ -5,23 +5,23 @@ export class TetrisBlockGenerator {
     const randomNumber = Math.floor(Math.random() * 14);
 
     if (randomNumber < 2) {
-      return this.getSquareBlock();
+      return this.getOBlock();
     } else if (randomNumber < 4) {
       return this.getLBlock();
     } else if (randomNumber < 6) {
-      return this.getOppositeLBlock();
+      return this.getJBlock();
     } else if (randomNumber < 8) {
       return this.getTBlock();
     } else if (randomNumber < 10) {
       return this.getZBlock();
     } else if (randomNumber < 12) {
-      return this.getOppositeZBlock();
+      return this.getSBlock();
     } else {
       return this.getIBlock();
     }
   }
 
-  private static getZBlock() {
+  private static getSBlock() {
     const n = this.getRandomColor();
     return new TetrisBlock(
       [
@@ -33,7 +33,7 @@ export class TetrisBlockGenerator {
     );
   }
 
-  private static getOppositeZBlock() {
+  private static getZBlock() {
     const n = this.getRandomColor();
     return new TetrisBlock(
       [
@@ -70,7 +70,7 @@ export class TetrisBlockGenerator {
     );
   }
 
-  private static getOppositeLBlock() {
+  private static getJBlock() {
     const n = this.getRandomColor();
 
     return new TetrisBlock(
@@ -83,7 +83,7 @@ export class TetrisBlockGenerator {
     );
   }
 
-  private static getSquareBlock() {
+  private static getOBlock() {
     const n = this.getRandomColor();
 
     return new TetrisBlock(
