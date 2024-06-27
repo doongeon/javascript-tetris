@@ -10,34 +10,39 @@ export class Game {
   round = 1;
   startTime: any;
   timer: Timer;
+  score = 0;
+  callback: () => void;
 
-  constructor() {
+  constructor(callback: () => void) {
     this.serviceCallback = this.serviceCallback.bind(this);
-
+    this.callback = callback;
     this.timer = new Timer();
     this.service = new Service(
       new Grid(),
       this.getWinScore(),
-      0,
+      this.score,
       this.getDropDownIntervalTime(),
       this.serviceCallback
     );
     this.controller = new Controller(this.service);
   }
 
-  private serviceCallback({ isWin }: { isWin: boolean }) {
-    if (this.round === 5) {
-      this.timer.clearDrawTimeInterval();
-      return;
-    }
+  private serviceCallback({ score, isWin }: { score: number; isWin: boolean }) {
     if (isWin) {
       this.round++;
+      this.score = score;
+      while (this.score > this.getWinScore()) {
+        this.round++;
+        View.writeRound(this.round);
+      }
+
       View.writeRound(this.round);
       this.nextRound();
       return;
     }
 
     this.timer.clearDrawTimeInterval();
+    this.callback();
   }
 
   startRound() {
@@ -47,20 +52,34 @@ export class Game {
     View.writeRound(this.round);
   }
 
-  private nextRound() {
-    this.service.dropDownIntervalTime = this.getDropDownIntervalTime();
-    this.service.winScore = this.getWinScore();
+  nextRound() {
+    setTimeout(() => {
+      this.setNextRound();
+      this.startNextRound();
+    }, 1000);
+  }
+
+  private setNextRound() {
+    this.service = new Service(
+      new Grid(),
+      this.getWinScore(),
+      this.score,
+      this.getDropDownIntervalTime(),
+      this.serviceCallback
+    );
+    this.controller = new Controller(this.service);
+  }
+
+  private startNextRound() {
     this.service.start();
   }
 
   getDropDownIntervalTime() {
-    if (this.round < 2) return 1000;
-    if (this.round < 4) return 700;
-    if (this.round < 5) return 500;
-    return 200;
+    const dropDownIntervalTime = 1000 - 100 * this.round;
+    return Math.max(dropDownIntervalTime, 400);
   }
 
   getWinScore() {
-    return 5000 + this.round * this.round * 1000;
+    return 3000 + this.round * this.round * 1000;
   }
 }
