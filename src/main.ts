@@ -6,12 +6,12 @@ import { renderStars } from "./components/stars.ts";
 import { renderCells } from "./components/cells.ts";
 import { Game } from "./classes/Game.ts";
 
-const game = new Game();
+let game = new Game(renderRestartBtn);
 
 renderStars(100);
 renderCells(ROW_COUNTS, COLUMN_COUNTS);
 
-const onClick = () => {
+const onClickStart = () => {
   const startBtn = document.getElementById("startBtn");
   const image = document.getElementById("image");
   if (!startBtn) return;
@@ -28,8 +28,28 @@ function renderStartBtn() {
   startBtn.id = "startBtn";
   startBtn.innerText = "start";
   startBtn.classList.add("button");
-  startBtn.addEventListener("click", onClick);
+  startBtn.addEventListener("click", onClickStart);
   gameGUI?.appendChild(startBtn);
+}
+
+const onClickRestart = () => {
+  const restartBtn = document.getElementById("restartBtn");
+  if (!restartBtn) return;
+  game = new Game(renderRestartBtn);
+  restartBtn.style.visibility = "hidden";
+  setTimeout(() => {
+    game.startRound();
+  }, 1000);
+};
+
+function renderRestartBtn() {
+  const gameGUI = document.getElementById("gameGUI");
+  const restartBtn = document.createElement("button");
+  restartBtn.id = "restartBtn";
+  restartBtn.innerText = "again?";
+  restartBtn.classList.add("button");
+  restartBtn.addEventListener("click", onClickRestart);
+  gameGUI?.appendChild(restartBtn);
 }
 
 renderStartBtn();
