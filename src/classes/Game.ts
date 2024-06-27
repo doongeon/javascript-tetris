@@ -1,5 +1,5 @@
 import { Controller } from "./Controller";
-import { Map } from "./Map";
+import { Grid } from "./Grid";
 import { Service } from "./Service";
 import { Timer } from "./Timer";
 import { View } from "./View";
@@ -16,7 +16,7 @@ export class Game {
 
     this.timer = new Timer();
     this.service = new Service(
-      new Map(),
+      new Grid(),
       this.getWinScore(),
       0,
       this.getDropDownIntervalTime(),
@@ -26,11 +26,14 @@ export class Game {
   }
 
   private serviceCallback({ isWin }: { isWin: boolean }) {
+    if (this.round === 5) {
+      this.timer.clearDrawTimeInterval();
+      return;
+    }
     if (isWin) {
       this.round++;
       View.writeRound(this.round);
-      this.setRound();
-      this.startRound();
+      this.nextRound();
       return;
     }
 
@@ -44,23 +47,16 @@ export class Game {
     View.writeRound(this.round);
   }
 
-  private setRound() {
-    this.service = new Service(
-      this.service.map,
-      this.getWinScore(),
-      0,
-      this.getDropDownIntervalTime(),
-      this.serviceCallback
-    );
-    this.controller = new Controller(this.service);
+  private nextRound() {
+    this.service.dropDownIntervalTime = this.getDropDownIntervalTime();
+    this.service.winScore = this.getWinScore();
+    this.service.start();
   }
 
   getDropDownIntervalTime() {
-    if (this.round < 3) return 1000;
+    if (this.round < 2) return 1000;
     if (this.round < 4) return 700;
     if (this.round < 5) return 500;
-    if (this.round < 6) return 500;
-    if (this.round < 7) return 300;
     return 200;
   }
 

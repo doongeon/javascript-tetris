@@ -1,11 +1,12 @@
+import { BeepSound } from "./BeepSound";
 import { CollisionDetector } from "./CollisionDetector";
-import { Map } from "./Map";
+import { Grid } from "./Grid";
 import { TetrisBlock } from "./TetrisBlock";
 import { TetrisBlockGenerator } from "./TetrisBlockGenerator";
 import { View } from "./View";
 
 export class Service {
-  map: Map;
+  grid: Grid;
   tetrisBlocks: TetrisBlock[];
   movingTetrisBlock: TetrisBlock;
   drawInterval: any;
@@ -15,45 +16,47 @@ export class Service {
   isStart = false;
   winScore: number;
   score: number;
+  beepSound = new BeepSound();
   callback: ({ score, isWin }: { score: number; isWin: boolean }) => void;
 
   constructor(
-    map: Map,
+    grid: Grid,
     winScore: number,
     score: number,
     dropDownIntervalTime: number,
     callback: ({ score, isWin }: { score: number; isWin: boolean }) => void
   ) {
-    this.map = map;
+    this.grid = grid;
     this.winScore = winScore;
     this.score = score;
     this.movingTetrisBlock = this.getNewTetrisBlock();
     View.drawPreview(this.movingTetrisBlock);
     this.tetrisBlocks = [...new Array(3)].map((__) => this.getNewTetrisBlock());
-    this.map.drawBlock(this.movingTetrisBlock);
-    View.drawPreview(this.tetrisBlocks[0]);
+    this.grid.drawBlock(this.movingTetrisBlock);
     this.dropDownIntervalTime = dropDownIntervalTime;
     this.callback = callback;
   }
 
   start() {
-    this.drawInterval = setInterval(() => {
-      View.draw(this.map);
-    }, 16);
+    this.startDrawInterval();
     this.isStart = true;
     this.fallingDownInterval = this.getFallingDownInterval();
+    View.drawPreview(this.tetrisBlocks[0]);
   }
 
   dropBlock() {
     if (!this.isStart) return;
+    BeepSound.beepMove();
     while (
       !CollisionDetector.detectCollisionOnBottom(
-        this.map,
+        this.grid,
         this.movingTetrisBlock
       )
     ) {
-      this.moveBlockDown();
-      View.draw(this.map);
+      this.grid.eraseBlock(this.movingTetrisBlock);
+      this.movingTetrisBlock.moveDown();
+      this.grid.drawBlock(this.movingTetrisBlock);
+      View.draw(this.grid);
     }
     this.next();
   }
@@ -62,24 +65,35 @@ export class Service {
     if (!this.isStart) return;
 
     if (
-      CollisionDetector.detectCollisionOnLeft(this.map, this.movingTetrisBlock)
-    )
+      CollisionDetector.detectCollisionOnLeft(this.grid, this.movingTetrisBlock)
+    ) {
+      BeepSound.beepDeny();
       return;
-    this.map.eraseBlock(this.movingTetrisBlock);
+    }
+
+    BeepSound.beepMove();
+    this.grid.eraseBlock(this.movingTetrisBlock);
     this.movingTetrisBlock.moveLeft();
-    this.map.drawBlock(this.movingTetrisBlock);
+    this.grid.drawBlock(this.movingTetrisBlock);
   }
 
   moveBlockRight() {
     if (!this.isStart) return;
 
     if (
-      CollisionDetector.detectCollisionOnRight(this.map, this.movingTetrisBlock)
-    )
+      CollisionDetector.detectCollisionOnRight(
+        this.grid,
+        this.movingTetrisBlock
+      )
+    ) {
+      BeepSound.beepDeny();
       return;
-    this.map.eraseBlock(this.movingTetrisBlock);
+    }
+
+    BeepSound.beepMove();
+    this.grid.eraseBlock(this.movingTetrisBlock);
     this.movingTetrisBlock.moveRight();
-    this.map.drawBlock(this.movingTetrisBlock);
+    this.grid.drawBlock(this.movingTetrisBlock);
   }
 
   moveBlockDown() {
@@ -87,123 +101,259 @@ export class Service {
 
     if (
       CollisionDetector.detectCollisionOnBottom(
-        this.map,
+        this.grid,
         this.movingTetrisBlock
       )
-    )
+    ) {
+      BeepSound.beepDeny();
       return;
-    this.map.eraseBlock(this.movingTetrisBlock);
+    }
+
+    BeepSound.beepMove();
+    this.grid.eraseBlock(this.movingTetrisBlock);
     this.movingTetrisBlock.moveDown();
-    this.map.drawBlock(this.movingTetrisBlock);
+    this.grid.drawBlock(this.movingTetrisBlock);
   }
 
   rotateBlock() {
     if (!this.isStart) return;
 
-    this.map.eraseBlock(this.movingTetrisBlock);
+    this.grid.eraseBlock(this.movingTetrisBlock);
+    BeepSound.beepMove();
 
-    // 제자리 회전
+    // 제자리 회전 충돌 확인
     if (
       !CollisionDetector.detectCollisionOnRotation(
-        this.map,
+        this.grid,
         this.movingTetrisBlock
       )
     ) {
       this.movingTetrisBlock.rotate();
-      this.map.drawBlock(this.movingTetrisBlock);
+      this.grid.drawBlock(this.movingTetrisBlock);
       return;
     }
 
-    // 오른쪽 한번 이동후 회전
+    // 오른쪽 한번 이동후 회전 충돌 확인
     let tetrisBlockCopy = this.movingTetrisBlock.getDeepCopy();
     tetrisBlockCopy.moveRight();
     tetrisBlockCopy.rotate();
 
     if (
-      !CollisionDetector.checkCollision(tetrisBlockCopy.getCells(), this.map)
+      !CollisionDetector.checkCollision(tetrisBlockCopy.getCells(), this.grid)
     ) {
       this.movingTetrisBlock.moveRight();
       this.movingTetrisBlock.rotate();
-      this.map.drawBlock(this.movingTetrisBlock);
+      this.grid.drawBlock(this.movingTetrisBlock);
       return;
     }
 
-    // 횐쫀 한번 이동후 회전
+    // 횐쫀 한번 이동후 회전 충돌 확인
     tetrisBlockCopy = this.movingTetrisBlock.getDeepCopy();
     tetrisBlockCopy.moveLeft();
     tetrisBlockCopy.rotate();
 
     if (
-      !CollisionDetector.checkCollision(tetrisBlockCopy.getCells(), this.map)
+      !CollisionDetector.checkCollision(tetrisBlockCopy.getCells(), this.grid)
     ) {
       this.movingTetrisBlock.moveLeft();
       this.movingTetrisBlock.rotate();
-      this.map.drawBlock(this.movingTetrisBlock);
+      this.grid.drawBlock(this.movingTetrisBlock);
       return;
     }
 
-    // 왼쪽 한번 위쪽 한번 이동후 회전
+    // 왼쪽 한번 위쪽 한번 이동후 회전 충돌 확인
     tetrisBlockCopy = this.movingTetrisBlock.getDeepCopy();
     tetrisBlockCopy.moveLeft();
     tetrisBlockCopy.moveUp();
     tetrisBlockCopy.rotate();
 
     if (
-      !CollisionDetector.checkCollision(tetrisBlockCopy.getCells(), this.map)
+      !CollisionDetector.checkCollision(tetrisBlockCopy.getCells(), this.grid)
     ) {
       this.movingTetrisBlock.moveLeft();
       this.movingTetrisBlock.moveUp();
       this.movingTetrisBlock.rotate();
-      this.map.drawBlock(this.movingTetrisBlock);
+      this.grid.drawBlock(this.movingTetrisBlock);
       return;
     }
 
-    //오른쪽 한번 휘쪽 한번 이동후 회전
+    //오른쪽 한번 휘쪽 한번 이동후 회전 충돌 확인
     tetrisBlockCopy = this.movingTetrisBlock.getDeepCopy();
     tetrisBlockCopy.moveRight();
     tetrisBlockCopy.moveUp();
     tetrisBlockCopy.rotate();
 
     if (
-      !CollisionDetector.checkCollision(tetrisBlockCopy.getCells(), this.map)
+      !CollisionDetector.checkCollision(tetrisBlockCopy.getCells(), this.grid)
     ) {
       this.movingTetrisBlock.moveRight();
       this.movingTetrisBlock.moveUp();
       this.movingTetrisBlock.rotate();
-      this.map.drawBlock(this.movingTetrisBlock);
+      this.grid.drawBlock(this.movingTetrisBlock);
       return;
     }
 
-    this.map.drawBlock(this.movingTetrisBlock);
+    //오른쪽 두번 이동후 회전 충돌 확인
+    tetrisBlockCopy = this.movingTetrisBlock.getDeepCopy();
+    tetrisBlockCopy.moveRight();
+    tetrisBlockCopy.moveRight();
+    tetrisBlockCopy.rotate();
+
+    if (
+      !CollisionDetector.checkCollision(tetrisBlockCopy.getCells(), this.grid)
+    ) {
+      this.movingTetrisBlock.moveRight();
+      this.movingTetrisBlock.moveRight();
+      this.movingTetrisBlock.rotate();
+      this.grid.drawBlock(this.movingTetrisBlock);
+      return;
+    }
+
+    //왼쪽 두번 이동후 회전 충돌 확인
+    tetrisBlockCopy = this.movingTetrisBlock.getDeepCopy();
+    tetrisBlockCopy.moveLeft();
+    tetrisBlockCopy.moveLeft();
+    tetrisBlockCopy.rotate();
+
+    if (
+      !CollisionDetector.checkCollision(tetrisBlockCopy.getCells(), this.grid)
+    ) {
+      this.movingTetrisBlock.moveLeft();
+      this.movingTetrisBlock.moveLeft();
+      this.movingTetrisBlock.rotate();
+      this.grid.drawBlock(this.movingTetrisBlock);
+      return;
+    }
+
+    //아래 이동후 회전 충돌 확인
+    tetrisBlockCopy = this.movingTetrisBlock.getDeepCopy();
+    tetrisBlockCopy.moveDown();
+    tetrisBlockCopy.rotate();
+
+    if (
+      !CollisionDetector.checkCollision(tetrisBlockCopy.getCells(), this.grid)
+    ) {
+      this.movingTetrisBlock.moveDown();
+      this.movingTetrisBlock.rotate();
+      this.grid.drawBlock(this.movingTetrisBlock);
+      return;
+    }
+
+    //아래 한번 왼쪽 한번 이동후 회전 충돌 확인
+    tetrisBlockCopy = this.movingTetrisBlock.getDeepCopy();
+    tetrisBlockCopy.moveDown();
+    tetrisBlockCopy.moveLeft();
+    tetrisBlockCopy.rotate();
+
+    if (
+      !CollisionDetector.checkCollision(tetrisBlockCopy.getCells(), this.grid)
+    ) {
+      this.movingTetrisBlock.moveDown();
+      this.movingTetrisBlock.moveLeft();
+      this.movingTetrisBlock.rotate();
+      this.grid.drawBlock(this.movingTetrisBlock);
+      return;
+    }
+
+    //아래 한번 오른쪽 한번 이동후 회전 충돌 확인
+    tetrisBlockCopy = this.movingTetrisBlock.getDeepCopy();
+    tetrisBlockCopy.moveDown();
+    tetrisBlockCopy.moveRight();
+    tetrisBlockCopy.rotate();
+
+    if (
+      !CollisionDetector.checkCollision(tetrisBlockCopy.getCells(), this.grid)
+    ) {
+      this.movingTetrisBlock.moveDown();
+      this.movingTetrisBlock.moveRight();
+      this.movingTetrisBlock.rotate();
+      this.grid.drawBlock(this.movingTetrisBlock);
+      return;
+    }
+
+    //아래 한번 왼쪽 두번 이동후 회전 충돌 확인
+    tetrisBlockCopy = this.movingTetrisBlock.getDeepCopy();
+    tetrisBlockCopy.moveDown();
+    tetrisBlockCopy.moveLeft();
+    tetrisBlockCopy.moveLeft();
+    tetrisBlockCopy.rotate();
+
+    if (
+      !CollisionDetector.checkCollision(tetrisBlockCopy.getCells(), this.grid)
+    ) {
+      this.movingTetrisBlock.moveDown();
+      this.movingTetrisBlock.moveLeft();
+      this.movingTetrisBlock.moveLeft();
+      this.movingTetrisBlock.rotate();
+      this.grid.drawBlock(this.movingTetrisBlock);
+      return;
+    }
+
+    //아래 한번 오른쪽 두번 이동후 회전 충돌 확인
+    tetrisBlockCopy = this.movingTetrisBlock.getDeepCopy();
+    tetrisBlockCopy.moveDown();
+    tetrisBlockCopy.moveRight();
+    tetrisBlockCopy.moveRight();
+    tetrisBlockCopy.rotate();
+
+    if (
+      !CollisionDetector.checkCollision(tetrisBlockCopy.getCells(), this.grid)
+    ) {
+      this.movingTetrisBlock.moveDown();
+      this.movingTetrisBlock.moveRight();
+      this.movingTetrisBlock.moveRight();
+      this.movingTetrisBlock.rotate();
+      this.grid.drawBlock(this.movingTetrisBlock);
+      return;
+    }
+
+    // 회전 불가능일시
+    BeepSound.beepDeny();
+    this.grid.drawBlock(this.movingTetrisBlock);
     return;
   }
 
-  getNewTetrisBlock() {
+  private getNewTetrisBlock() {
     return TetrisBlockGenerator.getNewBlock();
   }
 
-  clearFallingDownInterval() {
+  private startDrawInterval() {
+    this.drawInterval = setInterval(() => {
+      View.draw(this.grid);
+    }, 16);
+  }
+
+  private clearDrawInterval() {
+    clearInterval(this.drawInterval);
+  }
+
+  private clearFallingDownInterval() {
     this.isHitBottom = false;
     clearInterval(this.fallingDownInterval);
   }
 
-  clearDrawInterval() {
-    clearInterval(this.drawInterval);
-  }
-
-  getFallingDownInterval() {
+  private getFallingDownInterval() {
     const fallingDownInterval = setInterval(() => {
-      this.moveBlockDown();
+      if (
+        !CollisionDetector.detectCollisionOnBottom(
+          this.grid,
+          this.movingTetrisBlock
+        )
+      ) {
+        this.grid.eraseBlock(this.movingTetrisBlock);
+        this.movingTetrisBlock.moveDown();
+        this.grid.drawBlock(this.movingTetrisBlock);
+      }
+
       if (
         CollisionDetector.detectCollisionOnBottom(
-          this.map,
+          this.grid,
           this.movingTetrisBlock
         )
       ) {
         if (this.isHitBottom) {
           this.next();
         }
-        console.log("다내려왔거등");
         this.isHitBottom = true;
         return;
       }
@@ -214,11 +364,11 @@ export class Service {
     return fallingDownInterval;
   }
 
-  next() {
+  private next() {
     this.score += 100;
     this.clearFallingDownInterval();
-    this.score += this.map.clearRow();
-    View.draw(this.map);
+    this.score += this.grid.clearRow();
+    View.draw(this.grid);
     View.writeScore(this.score);
 
     console.log(this.score, this.winScore);
@@ -231,18 +381,21 @@ export class Service {
     this.setNextBlock();
 
     if (
-      CollisionDetector.detectCollisionOnStart(this.map, this.movingTetrisBlock)
+      CollisionDetector.detectCollisionOnStart(
+        this.grid,
+        this.movingTetrisBlock
+      )
     ) {
       console.log("lose!");
       this.lose();
       return;
     }
 
-    this.map.drawBlock(this.movingTetrisBlock);
+    this.grid.drawBlock(this.movingTetrisBlock);
     this.fallingDownInterval = this.getFallingDownInterval();
   }
 
-  setNextBlock() {
+  private setNextBlock() {
     const nextMovingTetrisBlock = this.tetrisBlocks.shift();
     if (!nextMovingTetrisBlock) throw Error("there is no next block");
     View.drawPreview(this.tetrisBlocks[0]);
@@ -250,14 +403,14 @@ export class Service {
     this.movingTetrisBlock = nextMovingTetrisBlock;
   }
 
-  lose() {
+  private lose() {
     this.clearDrawInterval();
     this.clearFallingDownInterval();
     this.isStart = false;
     this.callback({ score: this.score, isWin: false });
   }
 
-  win() {
+  private win() {
     this.clearDrawInterval();
     this.clearFallingDownInterval();
     this.isStart = false;
