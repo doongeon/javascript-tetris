@@ -1,5 +1,5 @@
+import { TetrisBlock } from ".";
 import { expect, test } from "vitest";
-import { TetrisBlock } from "./TetrisBlock";
 
 test("TetrisBlock 클래스 getCopy 메서드의 깊은 복사", () => {
   const tetrisBlock = new TetrisBlock(

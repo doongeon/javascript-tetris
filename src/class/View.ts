@@ -1,7 +1,6 @@
-import { Grid } from "./Grid";
-import { TetrisBlock } from "./TetrisBlock";
+import { Grid, TetrisBlock } from ".";
 
-export class View {
+export default class View {
   public static draw(grid: Grid) {
     this.clearView();
     this.colorView(grid);

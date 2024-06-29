@@ -1,8 +1,7 @@
-import { Grid } from "./Grid";
-import { TetrisBlock } from "./TetrisBlock";
+import { Grid, TetrisBlock } from ".";
 import { CellPosition } from "./Types";
 
-export class CollisionDetector {
+export default class CollisionDetector {
   public static detectCollisionOnLeft(grid: Grid, tetrisBlock: TetrisBlock) {
     const { mapCopy, tetrisBlockCopy } = this.getDeepCopy(grid, tetrisBlock);
     mapCopy.eraseBlock(tetrisBlockCopy);

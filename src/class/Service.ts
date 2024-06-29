@@ -1,11 +1,14 @@
-import { BeepSound } from "./BeepSound";
-import { CollisionDetector } from "./CollisionDetector";
-import { Grid } from "./Grid";
-import { TetrisBlock } from "./TetrisBlock";
-import { TetrisBlockGenerator } from "./TetrisBlockGenerator";
-import { View } from "./View";
+import {
+  BeepSound,
+  CollisionDetector,
+  Grid,
+  TetrisBlock,
+  TetrisBlockGenerator,
+  View,
+} from ".";
+import { ServiceCallbackProps } from "./Types";
 
-export class Service {
+export default class Service {
   grid: Grid;
   tetrisBlocks: TetrisBlock[];
   movingTetrisBlock: TetrisBlock;
@@ -16,30 +19,30 @@ export class Service {
   isStart = false;
   winScore: number;
   score: number;
-  callback: ({ score, isWin }: { score: number; isWin: boolean }) => void;
+  callback: ({ score, isWin }: ServiceCallbackProps) => void;
 
   constructor(
     grid: Grid,
     winScore: number,
     score: number,
     dropDownIntervalTime: number,
-    callback: ({ score, isWin }: { score: number; isWin: boolean }) => void
+    callback: ({ score, isWin }: ServiceCallbackProps) => void
   ) {
     this.grid = grid;
     this.winScore = winScore;
     this.score = score;
     this.movingTetrisBlock = this.getNewTetrisBlock();
-    View.drawPreview(this.movingTetrisBlock);
     this.tetrisBlocks = [...new Array(3)].map((__) => this.getNewTetrisBlock());
+    View.drawPreview(this.tetrisBlocks[0]);
     this.grid.drawBlock(this.movingTetrisBlock);
     this.dropDownIntervalTime = dropDownIntervalTime;
     this.callback = callback;
   }
 
   public start() {
+    this.isStart = true;
     this.startDrawInterval();
     this.fallingDownInterval = this.getFallingDownInterval();
-    this.isStart = true;
     View.drawPreview(this.tetrisBlocks[0]);
   }
 

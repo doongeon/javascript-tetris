@@ -1,7 +1,5 @@
+import { CollisionDetector, TetrisBlock, Grid } from ".";
 import { expect, test } from "vitest";
-import { CollisionDetector } from "./CollisionDetector";
-import { Grid } from "./Grid";
-import { TetrisBlock } from "./TetrisBlock";
 
 test("왼쪽 벽 충돌 감지", () => {
   const grid = new Grid([

@@ -1,4 +1,4 @@
-export class BeepSound {
+export default class BeepSound {
   static AudioContext =
     (typeof window !== "undefined" && window.AudioContext) || null;
   static audioCtx = this.AudioContext ? new this.AudioContext() : null;

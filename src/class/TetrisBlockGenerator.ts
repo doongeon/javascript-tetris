@@ -1,6 +1,7 @@
-import { TetrisBlock } from "./TetrisBlock";
+import { TetrisBlock } from ".";
+import { START_POSITION_X, START_POSITION_Y } from "../Constants";
 
-export class TetrisBlockGenerator {
+export default class TetrisBlockGenerator {
   public static getNewBlock() {
     const randomNumber = Math.floor(Math.random() * 14);
 
@@ -29,7 +30,7 @@ export class TetrisBlockGenerator {
         [n, n, 0],
         [0, 0, 0],
       ],
-      { x: 4, y: 2 }
+      { x: START_POSITION_X, y: START_POSITION_Y }
     );
   }
 
@@ -41,7 +42,7 @@ export class TetrisBlockGenerator {
         [0, n, n],
         [0, 0, 0],
       ],
-      { x: 4, y: 2 }
+      { x: START_POSITION_X, y: START_POSITION_Y }
     );
   }
 
@@ -53,7 +54,7 @@ export class TetrisBlockGenerator {
         [n, n, n],
         [0, 0, 0],
       ],
-      { x: 4, y: 2 }
+      { x: START_POSITION_X, y: START_POSITION_Y }
     );
   }
 
@@ -66,7 +67,7 @@ export class TetrisBlockGenerator {
         [n, n, n],
         [0, 0, 0],
       ],
-      { x: 4, y: 2 }
+      { x: START_POSITION_X, y: START_POSITION_Y }
     );
   }
 
@@ -79,7 +80,7 @@ export class TetrisBlockGenerator {
         [n, n, n],
         [0, 0, 0],
       ],
-      { x: 4, y: 2 }
+      { x: START_POSITION_X, y: START_POSITION_Y }
     );
   }
 
@@ -91,7 +92,7 @@ export class TetrisBlockGenerator {
         [n, n],
         [n, n],
       ],
-      { x: 4, y: 2 }
+      { x: START_POSITION_X, y: START_POSITION_Y }
     );
   }
 
@@ -105,7 +106,7 @@ export class TetrisBlockGenerator {
         [n, n, n, n],
         [0, 0, 0, 0],
       ],
-      { x: 4, y: 2 }
+      { x: START_POSITION_X, y: START_POSITION_Y }
     );
   }
 

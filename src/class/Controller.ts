@@ -1,6 +1,6 @@
-import { Service } from "./Service";
+import { Service } from ".";
 
-export class Controller {
+export default class Controller {
   service: Service;
 
   constructor(service: Service) {
@@ -9,7 +9,7 @@ export class Controller {
     document.addEventListener("keydown", this.handleKeyDown);
   }
 
-  handleKeyDown(event: KeyboardEvent) {
+  private handleKeyDown(event: KeyboardEvent) {
     if (event.defaultPrevented) {
       return;
     }

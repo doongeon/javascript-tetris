@@ -1,7 +1,5 @@
+import { Service, Grid, TetrisBlock } from ".";
 import { describe, beforeEach, afterEach, test, expect, vi } from "vitest";
-import { Service } from "./Service";
-import { Grid } from "./Grid";
-import { TetrisBlock } from "./TetrisBlock";
 
 /**
  * @jest-environment jsdom

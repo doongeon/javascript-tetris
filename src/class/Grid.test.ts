@@ -1,7 +1,6 @@
-import { Grid } from "./Grid";
+import { Grid, TetrisBlock } from ".";
+import { COLUMN_COUNTS, ROW_COUNTS } from "../Constants";
 import { test, expect } from "vitest";
-import { TetrisBlock } from "./TetrisBlock";
-import { COLUMN_COUNTS, ROW_COUNTS } from "./Constants";
 
 test("파라미터와 Grid 클래스 생성 ", () => {
   try {

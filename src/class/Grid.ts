@@ -1,8 +1,7 @@
-import { BeepSound } from "./BeepSound";
-import { COLUMN_COUNTS, ROW_COUNTS } from "./Constants";
-import { TetrisBlock } from "./TetrisBlock";
+import { BeepSound, TetrisBlock } from ".";
+import { COLUMN_COUNTS, ROW_COUNTS } from "../Constants";
 
-export class Grid {
+export default class Grid {
   private rowCounts = ROW_COUNTS;
   private columnCounts = COLUMN_COUNTS;
   grid: number[][] = [];

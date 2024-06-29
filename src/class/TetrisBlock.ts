@@ -1,6 +1,6 @@
 import { BlockPosition, BlockShape } from "./Types";
 
-export class TetrisBlock {
+export default class TetrisBlock {
   shape: BlockShape;
   position: BlockPosition;
 

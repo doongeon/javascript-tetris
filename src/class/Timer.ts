@@ -1,6 +1,6 @@
-import { View } from "./View";
+import { View } from ".";
 
-export class Timer {
+export default class Timer {
   private startTime: null | number = null;
   private drawTimeInterval: any;
 
