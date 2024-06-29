@@ -1,0 +1,7 @@
+.image-container {
+  margin: auto;
+}
+
+.image {
+  width: calc(var(--console-width));
+}

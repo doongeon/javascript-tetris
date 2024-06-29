@@ -1,0 +1,56 @@
+@import "./styles/gui-background.css";
+@import "./styles/button.css";
+@import "./styles/popup.css";
+@import "./styles/image-container.css";
+@import "./styles/console.css";
+@import "./styles/gui.css";
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --console-padding: 5px;
+  --console-width: 200px;
+  --gui-width: 300px;
+}
+
+/* @media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+} */
+
+body {
+  height: 100vh;
+  background-color: rgb(0, 1, 18);
+  display: flex;
+  margin: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-pad {
+  position: relative;
+  width: calc(
+    var(--console-padding) * 2 + var(--gui-width) + var(--console-width)
+  );
+  display: flex;
+  border: 5px solid gray;
+}

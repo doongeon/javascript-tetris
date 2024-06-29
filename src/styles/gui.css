@@ -1,0 +1,36 @@
+.game-gui {
+  position: relative;
+  width: var(--gui-width);
+  display: grid;
+  gap: 2px;
+}
+
+.cell {
+  background-color: inherit;
+  aspect-ratio: 1/1;
+}
+
+.red.cell {
+  background-color: red;
+  z-index: 1;
+}
+
+.orange.cell {
+  background-color: orange;
+  z-index: 1;
+}
+
+.yellow.cell {
+  background-color: yellow;
+  z-index: 1;
+}
+
+.green.cell {
+  background-color: green;
+  z-index: 1;
+}
+
+.blue.cell {
+  background-color: blue;
+  z-index: 1;
+}

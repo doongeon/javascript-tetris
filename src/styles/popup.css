@@ -1,0 +1,34 @@
+.popup {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 60px;
+  font-size: large;
+  font-weight: bold;
+  text-transform: uppercase;
+  background-color: black;
+  border: 5px solid white;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.rainbow-text {
+  background: linear-gradient(
+    to right,
+    red,
+    orange,
+    yellow,
+    rgb(0, 255, 0),
+    rgb(74, 74, 255),
+    rgb(255, 0, 255)
+  );
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+}
