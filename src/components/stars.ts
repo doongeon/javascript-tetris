@@ -1,4 +1,4 @@
-export function renderStars(n: number) {
+export default function renderStars(n: number) {
   const gameBackground = document.getElementById("gameBackground");
   [...new Array(n)].map((__) => {
     const star = document.createElement("div");
