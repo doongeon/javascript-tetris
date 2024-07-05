@@ -10,24 +10,25 @@ export default class Controller {
   }
 
   private handleKeyDown(event: KeyboardEvent) {
-    if (event.defaultPrevented) {
-      return;
-    }
-
     switch (event.key) {
       case "ArrowLeft":
+        event.preventDefault();
         this.service.moveBlockLeft();
         break;
       case "ArrowRight":
+        event.preventDefault();
         this.service.moveBlockRight();
         break;
       case "ArrowDown":
+        event.preventDefault();
         this.service.moveBlockDown();
         break;
       case "ArrowUp":
+        event.preventDefault();
         this.service.rotateBlock();
         break;
       case " ":
+        event.preventDefault();
         this.service.dropBlock();
         break;
     }
