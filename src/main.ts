@@ -8,6 +8,7 @@ document.addEventListener("keydown", function (event: KeyboardEvent) {
   if (keysToBlock.includes(event.key)) {
     // Send message to parent window to block scrolling
     window.parent.postMessage("block-keys", "http://localhost:5173");
+    console.log("scroll");
   }
 });
 
