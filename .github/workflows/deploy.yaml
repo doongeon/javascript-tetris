@@ -1,0 +1,35 @@
+name: Deploy to S3
+
+on:
+  push:
+    branches:
+      - main # 또는 배포를 트리거할 다른 브랜치
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "21" # 필요한 Node.js 버전
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build # 빌드 명령어가 `npm run build`가 아닌 경우 변경
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2 # 사용중인 AWS 리전
+
+      - name: Upload to S3
+        run: aws s3 sync dist/ s3://js-tetris --delete
