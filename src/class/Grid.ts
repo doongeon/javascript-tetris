@@ -1,5 +1,6 @@
 import { BeepSound, TetrisBlock } from ".";
 import { COLUMN_COUNTS, ROW_COUNTS } from "../Constants";
+import { CellPosition } from "./Types";
 
 export default class Grid {
   private rowCounts = ROW_COUNTS;
@@ -37,6 +38,7 @@ export default class Grid {
       for (let j = 0; j < blockWidth; j++) {
         if (tetrisBlock.shape[i][j] === 0) continue;
 
+        // 테트리스 블록 셀이 그리드 인덱스 범위 안에있는지 확인
         if (
           tetrisBlock.position.x - 1 + j < 0 ||
           tetrisBlock.position.x - 1 + j > this.grid[0].length - 1 ||
@@ -59,6 +61,7 @@ export default class Grid {
       for (let j = 0; j < blockWidth; j++) {
         if (movingBlock.shape[i][j] === 0) continue;
 
+        // 테트리스 블록 셀이 그리드 인덱스 범위 안에있는지 확인
         if (
           movingBlock.position.x - 1 + j < 0 ||
           movingBlock.position.x - 1 + j > this.grid[0].length - 1 ||
@@ -96,7 +99,7 @@ export default class Grid {
     return score;
   }
 
-  public isEmptyCell({ x, y }: { x: number; y: number }) {
+  public isEmptyCell({ x, y }: CellPosition) {
     if (x < 0 || x > this.grid[0].length - 1) return false; // 블럭이 있는거처럼 표현
     if (y < 0 || y > this.grid.length - 1) return false; // 블럭이 있는거처럼 표현
     if (this.grid[y][x] !== 0) return false;
