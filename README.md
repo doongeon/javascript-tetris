@@ -8,7 +8,7 @@ only css, js, html. Build with Vite.
 
 Up Arrow: rotate, Arrow: move, Space Bar: drop,
 
-[Click here to play](https://js-tetris.s3.ap-northeast-2.amazonaws.com/index.html)
+[Click here to play](http://tetrisjs-app.s3-website.ap-northeast-2.amazonaws.com/)
 </div>
 
 ## 프로젝트 구조
